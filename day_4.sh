@@ -25,6 +25,8 @@ do
         SSH)
             echo " "
             echo "You have chosen SSH"
+            cd $path
+            echo " "
             echo "Please confirm that you would like to use $key located in the directory $path to SSH into $uname@$ip"
             read -p "Press enter to continue or type 'exit' to cancel " ssh_ans
             if [[ $ssh_ans = "exit" ]]; then
@@ -32,16 +34,14 @@ do
                 exit 0
             else
                 echo "Now connecting to $ip"
-                cd $path
-                ssh -i $key $uname@$ip
+                ssh -i $path/$key $uname@$ip
             fi
             break
         ;;
         SCP)
             echo " "
             echo "You have chosen SCP"
-            cd $path
-
+            echo " "
             echo "From the following menu:"
             PS3="Would you like to transfer a file from your local machine to the remote machine or from the remote machine to local?"
             options1=("Remote to Local" "Local to Remote")
@@ -49,12 +49,14 @@ do
             do
                 case $ans1 in
                     "Remote to Local")
+                        echo " "
                         read -p "Enter the the name of the file and it's extension that you would like to transfer from $ip: " file
                         read -p "Enter the location (path) of $file at $ip: " location
                         read -p "Enter the destination of the file in your local machine: " dest
                         read -p "Would you like to rename the file at the destination? (yes/no): " qrename
                         if [[ $qrename = "yes" ]]; then
                             read -p "Please enter the new name of the file: " newname
+                            echo " "
                             echo "Please confirm that you would like to transfer $file located in $location at $ip to folder $dest on your local machine with the name $newname"
                             read -p "Press enter to continue or type 'exit' to cancel " scpans
                             if [[ $scpans = "exit" ]]; then
@@ -62,9 +64,10 @@ do
                                 exit 0
                             else 
                             echo "transferring file"
-                            scp $uname@$ip:$location/$file $dest/$newname
+                            scp -i $path/$key $uname@$ip:$location/$file $dest/$newname
                             fi
                         else
+                            echo " "
                             echo "Please confirm that you would like to transfer $file located in $location at $ip to folder $dest on your local machine"
                             read -p "Press enter to continue or type 'exit' to cancel " scp2ans
                             if [[ $scp2ans = "exit" ]]; then
@@ -72,18 +75,20 @@ do
                                 exit 0
                             else 
                             echo "transferring file"
-                            scp $uname@$ip:$location/$file $dest
+                            scp -i $path/$key $uname@$ip:$location/$file $dest
                             fi
                         fi
                         break
                     ;;
                     "Local to Remote")
+                        echo " "
                         read -p "Enter the the name of the file and it's extension that you would like to transfer to $ip: " file
                         read -p "Enter the location (path) of $file in your local machine: " location
                         read -p "Enter the destination of the file at $ip: " dest
                         read -p "Would you like to rename the file at the destination? (yes/no): " qrename
                         if [[ $qrename = "yes" ]]; then
                             read -p "Please enter the new name of the file: " newname
+                            echo " "
                             echo "Please confirm that you would like to transfer $file located at $location to $ip in folder $dest with the name $newname"
                             read -p "Press enter to continue or type 'exit' to cancel " scpans
                             if [[ $scpans = "exit" ]]; then
@@ -91,9 +96,10 @@ do
                                 exit 0
                             else 
                             echo "transferring file"
-                            scp $location/$file $uname@$ip:$dest/$newname
+                            scp -i $path/$key $location/$file $uname@$ip:$dest/$newname
                             fi
                         else
+                            echo " "
                             echo "Please confirm that you would like to transfer $file located at $location to $ip in folder $dest"
                             read -p "Press enter to continue or type 'exit' to cancel " scp2ans
                             if [[ $scp2ans = "exit" ]]; then
@@ -101,7 +107,7 @@ do
                                 exit 0
                             else 
                             echo "transferring file"
-                            scp $location/$file $uname@$ip:$dest
+                            scp -i $path/$key $location/$file $uname@$ip:$dest
                             fi
                         fi
                         break
